@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Keyboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f4f4;
+            transition: background 0.3s, color 0.3s;
+        }
+        .keyboard-container {
+            max-width: 400px;
+            margin: auto;
+            padding: 10px;
+        }
+        .text-area {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            padding: 10px;
+        }
+        .key {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            background: #ddd;
+            border-radius: 5px;
+            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+            font-size: 1em;
+            line-height: 40px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s, transform 0.1s, font-size 0.3s;
+            text-align: center;
+        }
+        .key:active {
+            transform: translateY(2px);
+        }
+        .alt-char {
+            font-size: 0.6em;
+            position: absolute;
+            top: 2px;
+            left: 5px;
+            transition: font-size 0.3s, top 0.3s, left 0.3s;
+        }
+        .toggle, .mode-switch {
+            margin-top: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .dark-mode {
+            background: #222;
+            color: white;
+        }
+        .dark-mode .key {
+            background: #555;
+        }
+        .alt-active .key {
+            font-size: 1em;
+        }
+        .alt-active .alt-char {
+            font-size: 1em;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .alt-active .key span:first-child {
+            font-size: 0.6em;
+            top: 2px;
+            left: 5px;
+            position: absolute;
+        }
+        .special-key {
+            width: 80px;
+        }
+        @media (max-width: 600px) {
+    .text-area {
+        width: 90%;
+        height: 120px;
+        font-size: 1.5em;
+        margin: 10px auto;
+        display: block;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="keyboard-container">
+        <textarea class="text-area" readonly></textarea>
+        <br>
+        <button class="toggle">Toggle Letters</button>
+        <div class="keyboard"></div>
+        <button class="mode-switch">Switch Mode</button>
+    </div>
+    <script>
+        const keyboard = document.querySelector(".keyboard");
+        const textArea = document.querySelector(".text-area");
+        const toggleBtn = document.querySelector(".toggle");
+        const modeSwitch = document.querySelector(".mode-switch");
+        
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        const altLetters = ["ᒧ", "⨆", "∟", "⊐", "☐", "ⵎ", "ヿ", "⊓", "Г", "⟓", "⨃", "Ŀ", "ᑔ", "🝕", "Ͼ", "ᒬ", "⩀", "⟔", "V", "ᐳ", "Λ", "𝈶", "ᐷ", "𐌞", "⟑", "⋖"];
+        
+        let useAlt = false;
+
+        function renderKeys() {
+            keyboard.innerHTML = "";
+            
+            letters.forEach((letter, index) => {
+                const key = document.createElement("div");
+                key.classList.add("key");
+                key.innerHTML = `<span class="main-char">${letter}</span><span class="alt-char">${altLetters[index]}</span>`;
+                key.addEventListener("click", () => {
+                    textArea.value += useAlt ? altLetters[index] : letter;
+                });
+                keyboard.appendChild(key);
+            });
+            
+            const spaceKey = document.createElement("div");
+            spaceKey.classList.add("key", "special-key");
+            spaceKey.textContent = "Space";
+            spaceKey.addEventListener("click", () => {
+                textArea.value += " ";
+            });
+            
+            const backspaceKey = document.createElement("div");
+            backspaceKey.classList.add("key", "special-key");
+            backspaceKey.textContent = "Backspace";
+            backspaceKey.addEventListener("click", () => {
+                textArea.value = textArea.value.slice(0, -1);
+            });
+            
+            keyboard.insertBefore(spaceKey, keyboard.children[24]);
+            keyboard.insertBefore(backspaceKey, keyboard.children[26]); 
+        }
+
+        toggleBtn.addEventListener("click", () => {
+            useAlt = !useAlt;
+            document.body.classList.toggle("alt-active", useAlt);
+        });
+
+        modeSwitch.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+        });
+
+        renderKeys();
+    </script>
+</body>
+</html>
